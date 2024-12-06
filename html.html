@@ -1,15 +1,14 @@
-html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kingdom 3522</title>
+<title>Kingdom 3522 KPI Calculator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f2f5;
+    background-color: #dcd874;
     margin: 0;
     padding: 20px;
     color: #333;
@@ -134,23 +133,32 @@ function calculateRequirement() {
   }
 
   // Updated formula:
-  // If Power < 50,000,000:
-  //   DKP = 20% (0.2)
-  //   Dead Requirement = 2% (0.02)
-  // If Power >= 50,000,000:
-  //   DKP = 30% (0.3)
-  //   Dead Requirement = 3% (0.03)
+  // If Power < 30,000,000: DKP = 10%, Dead = 1%
+  // If Power > 30,000,000 and <40,000,000: DKP = 15%, Dead = 1.5%
+  // If Power > 40,000,000 and <650,000,000: DKP = 20%, Dead = 2%
+  // If Power >= 65,000,000: DKP = 25%, Dead = 2.5%
 
   let dkpGoal, deadRequirement, category;
 
-  if (power >= 50000000) {
-    dkpGoal = power * 0.3;
-    deadRequirement = power * 0.03;
-    category = '30% DKP and 3% Dead Requirement category';
-  } else {
+  if (power < 30000000) {
+    dkpGoal = power * 0.1;
+    deadRequirement = power * 0.01;
+    category = '10% DKP and 1% Dead Requirement category';
+  } else if (power < 40000000) {
+    // means power is >= 30,000,000 and < 40,000,000
+    dkpGoal = power * 0.15;
+    deadRequirement = power * 0.015;
+    category = '15% DKP and 1.5% Dead Requirement category';
+  } else if (power < 65000000) {
+    // means power is >= 40,000,000 and < 65,000,000
     dkpGoal = power * 0.2;
     deadRequirement = power * 0.02;
     category = '20% DKP and 2% Dead Requirement category';
+  } else {
+    // power >= 65,000,000
+    dkpGoal = power * 0.25;
+    deadRequirement = power * 0.025;
+    category = '25% DKP and 2.5% Dead Requirement category';
   }
 
   var dkpGoalFormatted = new Intl.NumberFormat('en-US').format(dkpGoal).replace(/,/g, '.');
